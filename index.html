@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="src/styles_5w.css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>My weather application</title>
+  </head>
+  <body id="global">
+    <div class="video-wrapper">
+      <video autoplay muted loop class="video-bkgd" id="video-background">
+        <source src="src/images/sky.mp4" type="video/mp4" />
+      </video>
+      <div class="weather-app">
+        <header>
+          <div class="city-main">
+            <h1 class="current-city">Paris</h1>
+          </div>
+          <form id="search-form">
+            <input
+                    type="search"
+                    placeholder="Enter a city.."
+                    required
+                    class="search-input"
+            />
+            <input type="submit" value="Search" class="search-button" />
+          </form>
+        </header>
+        <main>
+          <div class="current-weather" id="day-forecast">
+            <div>
+              <span class="current-temperature-value" id="currentTemp">24</span
+              ><span class="current-temperature-unit">°C</span>
+              <img src="src/images/icons/sun100.png" class="current-temperature-icon">
+              <p class="current-details">
+                <span id="currentDate">Saturday 15:32</span><span id="weatherDescription">, moderate rain <br />
+                Humidity: <strong>87%</strong>, Wind: <strong>7.2km/h</strong></span>
+              </p>
+            </div>
+            <div class="sameCity-list">
+              <div class="table-name">
+                <div class="table-name-items">Other cities same name️</div
+                ><div class="table-name-items">Country</div
+                ><div class="table-name-items">Region</div
+                ><div class="table-name-items">Temp.</div>
+              </div>
+
+              <div class="table-row">
+                <span class="table-content">Paris️</span
+                ><span class="table-content">US</span
+                ><span class="table-content">Texas</span>
+                <span class="table-content">12°C</span>
+              </div>
+              <div class="table-row">
+                <span class="table-content">Paris️</span
+                ><span class="table-content">US</span
+                ><span class="table-content">Kentucky</span>
+                <span class="table-content">9°C</span>
+              </div>
+              <br/>
+              This section is under construction!
+            </div>
+          </div>
+        </main>
+        <footer>
+          <p>
+            This project was coded by
+            <a
+                    href="https://github.com/gluontevery"
+                    target="_blank"
+                    rel="noreferrer"
+            >K.Shakun</a
+            >
+            and is
+            <a
+                    href="https://github.com/gluontevery/Wetter-Bericht"
+                    target="_blank"
+                    rel="noreferrer"
+            >
+              on GitHub</a
+            >
+            and
+            <a
+                    href="https://scintillating-gingersnap-bc3585.netlify.app/"
+                    target="_blank"
+                    rel="noreferrer"
+            >hosted on Netlify</a
+            >
+          </p>
+        </footer>
+      </div>
+    </div>
+    <script src="src/index_5w.js"></script>
+  </body>
+</html>

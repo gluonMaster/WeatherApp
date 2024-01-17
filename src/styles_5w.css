@@ -1,0 +1,173 @@
+body {
+  background: #f9f7fe;
+  font-family: "Roboto", sans-serif;
+}
+
+a {
+  color: #885df1;
+}
+
+.video-bkgd {
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.video-wrapper {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weather-app {
+  position: relative;
+  background: white;
+  min-width: 800px;
+  margin: 60px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 30px 50px rgba(65, 50, 100, 0.08);
+  animation: 4s fadeIn;
+  animation-fill-mode: forwards;
+  transition: opacity 1.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  50% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+
+header {
+  padding-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+form{
+  min-width: 400px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: right;
+}
+
+.search-input {
+  background-color: #f9f7fe;
+  border: none;
+  color: rgba(39, 33, 66, 0.4);
+  font-size: 16px;
+  padding: 20px;
+  width: 65%;
+  border-radius: 6px;
+}
+
+.search-button {
+  margin-left: 20px;
+  font-size: 16px;
+  background-color: #885df1;
+  color: white;
+  border: none;
+  padding: 20px 20px 20px 20px;
+  line-height: 1;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  top: -2px;
+}
+
+main {
+  padding: 30px 0;
+}
+
+.sameCity-list {
+  border: solid antiquewhite;
+  border-radius: 5px;
+  padding: 15px;
+  min-width: 480px;
+  font-size: 120%;
+}
+
+.table-name{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #885df1;
+}
+.table-name-items{
+  flex: 120px;
+}
+
+.table-row{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.table-content{
+  flex: 120px;
+}
+
+.current-weather {
+  display: flex;
+  justify-content: space-between;
+}
+
+.current-city {
+  text-align: left;
+  font-size: 46px;
+  font-weight: 700;
+  margin: 0;
+}
+.current-details {
+  text-align: left;
+  color: rgba(39, 33, 66, 0.4);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.current-details strong {
+  color: #f65282;
+}
+
+.current-temperature-icon {
+  position: relative;
+  top: 20px;
+  width: 120px;
+  margin-left: 20px;
+}
+
+.current-temperature-value {
+  font-size: 120px;
+  font-weight: normal;
+  color: #885df1;
+}
+
+.current-temperature-unit {
+  font-size: 40px;
+  position: relative;
+  top: -48px;
+}
+
+footer {
+  border-top: 1px solid #f9f7fe;
+  text-align: center;
+  padding-top: 15px;
+
+  color: rgba(39, 33, 66, 0.4);
+}
