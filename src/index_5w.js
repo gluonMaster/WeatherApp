@@ -1,14 +1,18 @@
+function geoCoordFromCityName(city){
+  let apiUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${apiKey}`;
+  axios.get(apiUrl).then(apiDataGeo);
+}
+
 function onPressButton(event) {
   event.preventDefault();
   let textField = document.querySelector("form .search-input");
   let city = textField.value;
   city = city.trim().toLowerCase();
   city = capitalise(city);
-  let apiUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${apiKey}`;
-  axios.get(apiUrl).then(apiDataGeo);
+  geoCoordFromCityName(city);
   htmlUpdateCity(city);
   textField.value = null;
-  htmlUpdateDate();
+  htmlUpdateDate(city);
 }
 
 function capitalise(cityName) {
@@ -49,7 +53,81 @@ function randomVideoBackground(){
   videoBackground.innerHTML = videoHtml;
 }
 
-function htmlUpdateDate() {
+function forecastGenerator(cityName, days, day) {
+  let dayForecast="";
+  let forecastHTML="";
+  const forecastSection = document.querySelector(".forecast");
+
+  for (let i = 1; i < 7; i++) {
+    day = day + 1;
+    if (day>6) {
+      day=day-7;
+    }
+    dayForecast=days[day].substring(0,3);
+    forecastHTML=forecastHTML+`<div class="day-forecast">
+                <div class="day-forecast-name">${dayForecast}</div>
+                <div class="icon-wrapper" id="icon${i}">
+                  <img src="src/images/icons/sun100.png" class="day-forecast-icon" alt="🌤">
+                </div>
+                <div class="day-forecast-temperature" id="tempDay${i}">
+                  <span class="day-forecast-temp">15°</span>
+                  <span class="day-forecast-temp-realFeel">9°</span>
+                </div>
+              </div>
+                `;
+  }
+  forecastSection.innerHTML=forecastHTML;
+  geoCoordFromCityName(cityName);
+}
+
+function forecastInserter(response) {
+  console.log(response);
+  let idTemp="";
+  let idIcon="";
+  let icon="";
+
+  let weatherData={
+    cloudy: 0,
+    description: "",
+    rain: 0,
+    snow: 0,
+  };
+
+  for (let i = 1; i < 7; i++) {
+    weatherData.rain=0;
+    weatherData.snow=0;
+    idTemp=`#tempDay${i}`;
+    let tempSection = document.querySelector(idTemp);
+    tempSection.innerHTML=`<span class="day-forecast-temp">
+                                ${Math.round(response.data.daily[i].temp.eve)}°
+                           <span class="tooltip">Average temp</span>
+                           </span>
+                           <span class="day-forecast-temp-realFeel">
+                                ${Math.round(response.data.daily[i].feels_like.eve)}°
+                           <span class="tooltip">Real-feel temp</span>
+                           </span>`;
+    console.log(`temperature in ${i}day ${response.data.daily[i].temp.eve}`);
+    //console.log(`RealFeel temp in ${i}day ${response.data.daily[i].feels_like.eve}`)
+    idIcon=`#icon${i}`;
+    let iconSection = document.querySelector(idIcon);
+    weatherData.cloudy=response.data.daily[i].clouds;
+
+    if ("rain" in response.data.daily[i]) {
+      weatherData.rain=response.data.daily[i].rain;
+      //console.log(`rain is ${weatherData.rain}`);
+    }
+    if ("snow" in response.data.daily[i]) {
+      weatherData.snow=response.data.daily[i].snow;
+      //console.log(`Snow is ${weatherData.snow}`);
+    }
+
+    icon = dayWeatherIconSelection(weatherData);
+    iconSection.innerHTML=`<img src="${icon}" class="day-forecast-icon" alt="weather icon">`;
+    //console.log(`Clouds density in ${i}day ${response.data.daily[i].clouds}`)
+  }
+}
+
+function htmlUpdateDate(cityName) {
   let days = [
     "Sunday",
     "Monday",
@@ -67,7 +145,7 @@ function htmlUpdateDate() {
   let currentDayTime = document.querySelector(
     ".current-weather #currentDate"
   );
-  let body = document.getElementById("global");
+  /*let body = document.getElementById("global");
 
   if (hours > 20 || hours < 5) {
     body.style[
@@ -84,7 +162,7 @@ function htmlUpdateDate() {
       "background"
     ] = `url("src/images/day_sky.jpg") no-repeat center fixed`;
     body.style["background-size"] = `cover`;
-  }
+  }*/
 
   randomVideoBackground()
 
@@ -97,6 +175,12 @@ function htmlUpdateDate() {
   }
 
   currentDayTime.innerHTML = `${days[day]} ${hours}:${minutes}`;
+  forecastGenerator(cityName, days, day)
+}
+
+function forecastApiRequest(lat, lon) {
+  const forecastUrlApi=`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=current,hourly,minutely,alerts&appid=${apiKey}&units=metric`;
+  axios.get(forecastUrlApi).then(forecastInserter);
 }
 
 function apiDataGeo(response) {
@@ -107,6 +191,7 @@ function apiDataGeo(response) {
     let lat = response.data[0].lat;
     let lon = response.data[0].lon;
     let apiUrlGeo = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    forecastApiRequest(lat, lon)
     axios.get(apiUrlGeo).then(changeTemperature);
   } catch (err) {
     //console.log(`The error is: ${err.message}`);
@@ -129,6 +214,8 @@ function apiDataCity(response) {
     sunRise: 0,
     sunSet: 0,
     description: "",
+    rain: 0,
+    snow: 0,
   };
   weatherData.temperature = response.data.main.temp;
   weatherData.humidity = response.data.main.humidity;
@@ -138,8 +225,79 @@ function apiDataCity(response) {
   weatherData.sunRise = response.data.sys.sunrise;
   weatherData.sunSet = response.data.sys.sunset;
   weatherData.description = response.data.weather[0].description;
+  if ("rain" in response.data) {
+    weatherData.rain=response.data.rain["1h"];
+    //console.log(`rain is ${weatherData.rain}`);
+  }
+  if ("snow" in response.data) {
+    weatherData.snow=response.data.snow["1h"];
+    //console.log(`Snow is ${weatherData.snow}`);
+  }
   return weatherData;
 }
+
+function dayWeatherIconSelection(weatherData) {
+  let icon="";
+
+  if (weatherData.rain>0 && weatherData.snow>0){
+    //console.log("rain and snow positive");
+    if (weatherData.temperature>0){
+      if (weatherData.rain<4) {
+        icon = "src/images/icons/clouds_thick_rain.png";
+      } else {icon = "src/images/icons/clouds_thick_rain_heavy.png";}
+    } else {icon = "src/images/icons/snow.png";}
+  } else if (weatherData.rain>0) {
+    //console.log("only rain positive");
+    if (weatherData.rain<4) {
+      icon = "src/images/icons/clouds_thick_rain.png";
+    } else {icon = "src/images/icons/clouds_thick_rain_heavy.png";}
+  } else if (weatherData.snow>0) {
+    //console.log("only snow positive");
+    icon = "src/images/icons/snow.png";
+  } else {
+    //console.log("rain and snow null");
+    if (weatherData.cloudy>25 && weatherData.cloudy<51) {
+      icon = "src/images/icons/sun50.png";
+    } else if (weatherData.cloudy>=51 && weatherData.cloudy<76) {
+      icon = "src/images/icons/sun25.png";
+    } else if (weatherData.cloudy>=76 && weatherData.cloudy<85) {
+      icon = "src/images/icons/clouds.png";
+    } else if (weatherData.cloudy>=85) {
+      icon = "src/images/icons/clouds_thick.png";
+    } else {
+      icon = "src/images/icons/sun100.png";
+    }
+  }
+
+  return icon;
+}
+
+function nightWeatherIconSelection(weatherData) {
+  let icon="";
+
+  if (weatherData.rain>0 && weatherData.snow>0){
+    if (weatherData.temperature>0){
+      if (weatherData.rain<4) {
+        icon = "src/images/icons/clouds_thick_rain.png";
+      } else {icon = "src/images/icons/clouds_thick_rain_heavy.png";}
+    } else {icon = "src/images/icons/night_snow.png";}
+  } else if (weatherData.rain>0) {
+    if (weatherData.rain<4) {
+      icon = "src/images/icons/clouds_thick_rain.png";
+    } else {icon = "src/images/icons/clouds_thick_rain_heavy.png";}
+  } else if (weatherData.snow>0) {
+    icon = "src/images/icons/night_snow.png";
+  } else {
+    if (weatherData.cloudy<30) {
+      icon = "src/images/icons/night_clear_sky.png";
+    } else if (weatherData.cloudy>=30 && weatherData.cloudy<76) {
+      icon = "src/images/icons/night_sky_clouds50.png";
+    }
+  }
+
+  return icon;
+}
+
 
 function changeTemperature(response) {
   const weatherData = apiDataCity(response);
@@ -161,23 +319,12 @@ function changeTemperature(response) {
 
   const weatherIcon= document.querySelector(".current-temperature-icon");
   if (weatherData.cityTime>weatherData.sunSet || weatherData.cityTime<weatherData.sunRise) {
-    if (weatherData.cloudy<30) {
-      weatherIcon.src = "src/images/icons/night_clear_sky.png";
-    } else if (weatherData.cloudy>=30 && weatherData.cloudy<76) {
-      weatherIcon.src = "src/images/icons/night_sky_clouds50.png";
-    }
+    weatherIcon.src = nightWeatherIconSelection(weatherData);
+  } else {
+    weatherIcon.src = dayWeatherIconSelection(weatherData);
   }
-
-
-
-  if (weatherData.cloudy>25 && weatherData.cloudy<51) {
-    weatherIcon.src = "src/images/icons/sun50.png";
-  } else if (weatherData.cloudy>=51 && weatherData.cloudy<76) {
-    weatherIcon.src = "src/images/icons/sun25.png";
-  } else if (weatherData.cloudy>=76 && weatherData.cloudy<85) {
-    weatherIcon.src = "src/images/icons/clouds.png";
-  } else if (weatherData.cloudy>=85) {
-    weatherIcon.src = "src/images/icons/clouds_thick.png";
+  if (weatherData.cloudy>=85) {
+    weatherIcon.src = dayWeatherIconSelection(weatherData);
   }
 }
 
@@ -185,11 +332,7 @@ const apiKey = "5201594abea9f3e38b70e65b11a80c24";
 const units = "metric";
 let reloadsCount=0;
 
-window.onload = htmlUpdateDate();
-window.onload = (()=> {
-  let apiUrl = `https://api.openweathermap.org/geo/1.0/direct?q=Paris&limit=5&appid=${apiKey}`;
-  axios.get(apiUrl).then(apiDataGeo);
-});
+window.onload = htmlUpdateDate("Paris");
 
 let citySearchForm = document.querySelector("#search-form");
 citySearchForm.addEventListener("submit", onPressButton);

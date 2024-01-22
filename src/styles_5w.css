@@ -93,11 +93,11 @@ main {
 }
 
 .sameCity-list {
-  border: solid antiquewhite;
-  border-radius: 5px;
+
   padding: 15px;
   min-width: 480px;
   font-size: 120%;
+  margin-left: 15px;
 }
 
 .table-name{
@@ -162,6 +162,84 @@ main {
   font-size: 40px;
   position: relative;
   top: -48px;
+}
+
+.gradient-line{
+  min-width: 600px;
+  height: 3px;
+  margin-top: 25px;
+  background: linear-gradient(to right, rgba(136, 93, 241, 0) 0%, rgb(136, 93, 241) 50%, rgb(136, 93, 241) 51%, rgba(136, 93, 241, 0) 100%);
+}
+
+.forecast {
+  padding: 15px;
+  min-width: 600px;
+  font-size: 120%;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.day-forecast {
+  flex: 100px;
+}
+
+.day-forecast-name{
+  font-weight: bold;
+  color: #885df1;
+  margin-bottom: 10px;
+}
+
+.day-forecast-icon{
+  width: 60px;
+}
+
+.day-forecast-temperature{
+  font-size: 80%;
+  font-weight: bold;
+  color: #f65282;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.day-forecast-temp-realFeel {
+  opacity: 0.5;
+  position: relative;
+}
+
+.day-forecast-temp {
+  position: relative;
+}
+
+.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: dimgray;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.day-forecast-temp:hover .tooltip {
+  visibility: visible;
+}
+
+.day-forecast-temp-realFeel:hover .tooltip {
+  visibility: visible;
+}
+
+.icon-wrapper {
+  min-height: 80px;
 }
 
 footer {
