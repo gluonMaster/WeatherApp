@@ -53,6 +53,39 @@ function randomVideoBackground(){
   videoBackground.innerHTML = videoHtml;
 }
 
+async function sameCityListGenerator(response) {
+  let latSameCity=0;
+  let lonSameCity=0;
+  let SameCityHTML="";
+  const SameCitySection = document.querySelector("#tableCityRows");
+  if (response==="Incorrect request!") {
+    SameCityHTML=response;
+  } else {
+    let latMainCity = Math.round(response.data[0].lat);
+    let lonMainCity = Math.round(response.data[0].lon);
+    for (let i = 1; i < 5; i++) {
+      latSameCity=Math.round(response.data[i].lat);
+      lonSameCity=Math.round(response.data[i].lon);
+
+      if (latMainCity !== latSameCity && lonMainCity !== lonSameCity) {
+        let apiUrlGeo = `https://api.openweathermap.org/data/2.5/weather?lat=${response.data[i].lat}&lon=${response.data[i].lon}&appid=${apiKey}&units=metric`;
+        let weatherData = await axios.get(apiUrlGeo).then(apiDataCity);
+        //console.log(weatherData);
+
+        SameCityHTML=SameCityHTML+`<div class="table-row">
+                  <span class="table-content">${response.data[i].name}️</span
+                  ><span class="table-content">${response.data[i].country}️</span
+                  ><span class="table-content">${response.data[i].state}️</span>
+                  <span class="table-content">${Math.round(weatherData.temperature)}°C</span>
+                </div>
+                `;
+      }
+  }
+
+  }
+  SameCitySection.innerHTML=SameCityHTML;
+}
+
 function forecastGenerator(cityName, days, day) {
   let dayForecast="";
   let forecastHTML="";
@@ -81,7 +114,7 @@ function forecastGenerator(cityName, days, day) {
 }
 
 function forecastInserter(response) {
-  console.log(response);
+  //console.log(response);
   let idTemp="";
   let idIcon="";
   let icon="";
@@ -106,7 +139,7 @@ function forecastInserter(response) {
                                 ${Math.round(response.data.daily[i].feels_like.eve)}°
                            <span class="tooltip">Real-feel temp</span>
                            </span>`;
-    console.log(`temperature in ${i}day ${response.data.daily[i].temp.eve}`);
+    //console.log(`temperature in ${i}day ${response.data.daily[i].temp.eve}`);
     //console.log(`RealFeel temp in ${i}day ${response.data.daily[i].feels_like.eve}`)
     idIcon=`#icon${i}`;
     let iconSection = document.querySelector(idIcon);
@@ -186,18 +219,21 @@ function forecastApiRequest(lat, lon) {
 function apiDataGeo(response) {
   //console.log(response.data[0].lat);
   //console.log(response.data[0].lon);
-  //console.log(response);
+  console.log(response);
   try {
     let lat = response.data[0].lat;
     let lon = response.data[0].lon;
     let apiUrlGeo = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
     forecastApiRequest(lat, lon)
     axios.get(apiUrlGeo).then(changeTemperature);
+    sameCityListGenerator(response);
   } catch (err) {
     //console.log(`The error is: ${err.message}`);
     htmlUpdateCity("!Incorrect request!");
     let h1Component = document.getElementById("currentTemp");
     h1Component.innerHTML = `--`;
+    response="Incorrect request!";
+    sameCityListGenerator(response);
     //alert(`We have no any information about city you requested`);
     throw new Error("The search request is incorrect!");
   }
