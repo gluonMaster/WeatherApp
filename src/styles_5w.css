@@ -122,6 +122,17 @@ main {
   flex: 120px;
 }
 
+.sameCityNames-href{
+  color: black;
+  text-decoration: none;
+}
+
+.sameCityNames-href:hover{
+  color: #885df1;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .current-weather {
   display: flex;
   justify-content: space-between;
