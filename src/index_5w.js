@@ -87,7 +87,7 @@ async function sameCityListGenerator(response) {
         let latMainCity = Math.round(response.data[0].lat);
         let lonMainCity = Math.round(response.data[0].lon);
 
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < response.data.length; i++) {
             latSameCity=Math.round(response.data[i].lat);
             lonSameCity=Math.round(response.data[i].lon);
 
